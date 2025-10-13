@@ -196,21 +196,25 @@ Also make it a string, for display purposes."
 (defun starling--maybe-show-transactions ()
   "Possibly show transactions, if we're on a line with an id."
   (interactive)
-  (when (tabulated-list-get-id)
-    (let ((starling--current-category (tabulated-list-get-id)))
-      (starling--show-transactions
-       (starling--do
-        'get
+  (let ((starling--current-category (tabulated-list-get-id)))
+    (when starling--current-category
+      (starling--do-catgeory-transactions
+       (starling--main-account-uuid) starling--current-category))))
 
-        ;; TODO: sensible date:
-        (concat
-         "api/v2/feed/account/"
-         (starling--main-account-uuid)
-         "/category/"
-         starling--current-category
-         "?changesSince="
-         (starling--txns-since)))
-       starling--current-category))))
+(defun starling--do-catgeory-transactions (account-uuid category-uuid)
+  "Get and show transactions for ACCOUNT-UUID and CATEGORY-UUID"
+  (starling--show-transactions
+   (starling--do
+    'get
+    ;; TODO: sensible date:
+    (concat
+     "api/v2/feed/account/"
+     account-uuid
+     "/category/"
+     category-uuid
+     "?changesSince="
+     (starling--txns-since)))
+   category-uuid))
 
 (defun starling--maybe-show-transaction ()
   "Possibly show transaction details, if we're on a line with an id."
@@ -425,5 +429,15 @@ Also make it a string, for display purposes."
     (insert (make-string (- 10 (length label)) 32))
     (insert value)
     (insert "\n")))
+
+(defun starling-transactions ()
+  "Show transactions, right now show the main account."
+  (interactive)
+  (let ((account-uuid (starling--main-account-uuid))
+        (category-uuid (starling--main-account-default-category)))
+    (if (and account-uuid category-uuid)
+        (starling--do-catgeory-transactions
+         account-uuid category-uuid)
+      (error "No account details found"))))
 
 (provide 'starling)

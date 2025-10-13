@@ -50,6 +50,7 @@ Proper packaging will probably come if you bug me :)
 
 Currently:
 
+ + ~M-x starling-transactions~ show the transactions from the main account. Press return (by default) to see more details.
  + ~M-x starling-spaces~ which should give a quick read on all your spaces. Press return (by default) on a space to see recent transactions.
  + ~M-x starling-insights~ whichs shows spending insights.
 
