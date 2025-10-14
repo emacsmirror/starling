@@ -54,9 +54,11 @@
       key))))
 
 
-(defun starling--headers ()
+(defun starling--headers (body)
   ""
-  `(("Authorization" . ,(concat "Bearer " (starling--key)))))
+  `(("Authorization" . ,(concat "Bearer " (starling--key)))
+    ,(when body
+       '("Content-type" . "application/json"))))
 
 (defun starling--get-accounts ()
   "get the list of accounts"
@@ -71,12 +73,20 @@ PATH is the path (with no leading slash) of the call you want to
 make, e.g api/v2/accounts
 BODY optional, body to send in the request (TODO, not actually any use for this yet)."
   ;; TODO: things go wrong!
-  (let ((req
-         (plz
-          verb
-          (starling--url path)
-          :headers (starling--headers)
-          :as #'json-read)))
+  (let* ((body-encoded
+          (when body
+            (json-encode body)))
+         (as
+          (if (equal verb 'get)
+              #'json-read
+            #'string))
+         (req
+          (plz
+           verb
+           (starling--url path)
+           :headers (starling--headers body)
+           :as as
+           :body body-encoded)))
     req))
 
 (defun starling--main-account ()
@@ -237,7 +247,9 @@ Also make it a string, for display purposes."
   :parent
   tabulated-list-mode-map
   "RET"
-  #'starling--maybe-show-transaction)
+  #'starling--maybe-show-transaction
+  "c"
+  #'starling--maybe-set-category)
 
 (define-derived-mode
  starling-transactions-mode
@@ -439,5 +451,128 @@ Also make it a string, for display purposes."
         (starling--do-catgeory-transactions
          account-uuid category-uuid)
       (error "No account details found"))))
+
+(defun starling--maybe-set-category ()
+  "Possibly set spending category, if we're on a line with an id."
+  (interactive)
+  (when (tabulated-list-get-id)
+    (starling--set-spending-category (tabulated-list-get-id))))
+
+(defun starling--set-spending-category (txn-uuid)
+  "Prompt for a new spending category for TXN-UUID"
+  (interactive)
+  (starling--maybe-action-spending-category
+   txn-uuid
+   (completing-read
+    "New spending category: " (starling--spending-categories)
+    nil 't)))
+
+;; Would be nice if starling could give us these :( 
+(defun starling--spending-categories ()
+  "List of possible spending categories."
+  '(BIKE
+    BILLS_AND_SERVICES
+    BUCKET_LIST
+    CAR
+    CASH
+    CELEBRATION
+    CHARITY
+    CHILDREN
+    CLOTHES
+    COFFEE
+    DEBT_REPAYMENT
+    DIY
+    DRINKS
+    EATING_OUT
+    EDUCATION
+    EMERGENCY
+    ENTERTAINMENT
+    ESSENTIAL_SPEND
+    EXPENSES
+    FAMILY
+    FITNESS
+    FUEL
+    GAMBLING
+    GAMING
+    GARDEN
+    GENERAL
+    GIFTS
+    GROCERIES
+    HOBBY
+    HOLIDAYS
+    HOME
+    IMPULSE_BUY
+    INCOME
+    INSURANCE
+    INVESTMENTS
+    LIFESTYLE
+    MAINTENANCE_AND_REPAIRS
+    MEDICAL
+    MORTGAGE
+    NON_ESSENTIAL_SPEND
+    PAYMENTS
+    PERSONAL_CARE
+    PERSONAL_TRANSFERS
+    PETS
+    PROJECTS
+    RELATIONSHIPS
+    RENT
+    SAVING
+    SHOPPING
+    SUBSCRIPTIONS
+    TAKEAWAY
+    TAXI
+    TRANSPORT
+    TREATS
+    WEDDING
+    WELLBEING
+    NONE
+    REVENUE
+    OTHER_INCOME
+    CLIENT_REFUNDS
+    INVENTORY
+    STAFF
+    TRAVEL
+    WORKPLACE
+    REPAIRS_AND_MAINTENANCE
+    ADMIN
+    MARKETING
+    BUSINESS_ENTERTAINMENT
+    INTEREST_PAYMENTS
+    BANK_CHARGES
+    OTHER
+    FOOD_AND_DRINK
+    EQUIPMENT
+    PROFESSIONAL_SERVICES
+    PHONE_AND_INTERNET
+    VEHICLES
+    DIRECTORS_WAGES
+    VAT
+    CORPORATION_TAX
+    SELF_ASSESSMENT_TAX
+    INVESTMENT_CAPITAL
+    TRANSFERS
+    LOAN_PRINCIPAL
+    PERSONAL
+    DIVIDENDS))
+
+(defun starling--maybe-action-spending-category
+    (txn-uuid new-category)
+  "Set the spending category for TXN-UUID to NEW-CATEGORY"
+
+  (when (and txn-uuid new-category starling--current-category)
+    (starling--do
+     'put
+     (concat
+      "api/v2/feed/account/"
+      (starling--main-account-uuid)
+      "/category/"
+      starling--current-category
+      "/"
+      txn-uuid
+      "/spending-category/")
+     `((spendingCategory . ,new-category))
+     ;; TODO: possibility to do it permnanently, and for old tnxs
+     )))
 
 (provide 'starling)
