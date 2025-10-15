@@ -18,7 +18,7 @@ First you need a personal access token from starling, and to hook this up to you
 
 Mostly, sign up for a dev account and then follow the section called "Personal Access", connect your account and create a token.
 
-Only grant rights you want the token to be allowed. I should add a proper list of what the code *can* do here at some point! 
+Only grant rights you want the token to be allowed. Recommendation (to be improved) is allow all read permissions, but if you want to be able to set spending categories you'll also need ~transaction:edit~. 
 
 ** Save your token somewhere emacs can find it
 

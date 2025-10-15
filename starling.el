@@ -247,9 +247,12 @@ Also make it a string, for display purposes."
   :parent
   tabulated-list-mode-map
   "RET"
+  ;; TODO: these should be "public"?
   #'starling--maybe-show-transaction
   "c"
-  #'starling--maybe-set-category)
+  #'starling--maybe-set-category
+  "g"
+  #'starling-refesh-current-transansaction-view)
 
 (define-derived-mode
  starling-transactions-mode
@@ -573,6 +576,17 @@ Also make it a string, for display purposes."
       "/spending-category/")
      `((spendingCategory . ,new-category))
      ;; TODO: possibility to do it permnanently, and for old tnxs
-     )))
+     )
+    (starling--refresh-transactions)))
 
+(defun starling--refresh-transactions ()
+  "Refresh a transactions view."
+  ;; TODO: option jump to the right place via uuid not via luck
+  (starling--do-catgeory-transactions
+   (starling--main-account-uuid) starling--current-category))
+
+(defun starling-refesh-current-transansaction-view ()
+  "Refresh the current starling transaction view assuming one is selected."
+  (when starling--current-category
+    (starling--refresh-transactions)))
 (provide 'starling)
