@@ -171,7 +171,6 @@ Also make it a string, for display purposes."
        (uuid . ,(starling--main-account-default-category))))))
 
 (defvar-keymap starling-spaces-mode-map
-  :suppress 't
   :parent
   tabulated-list-mode-map
   "RET"
@@ -211,20 +210,22 @@ Also make it a string, for display purposes."
       (starling--do-catgeory-transactions
        (starling--main-account-uuid) starling--current-category))))
 
-(defun starling--do-catgeory-transactions (account-uuid category-uuid)
-  "Get and show transactions for ACCOUNT-UUID and CATEGORY-UUID"
-  (starling--show-transactions
-   (starling--do
-    'get
-    ;; TODO: sensible date:
-    (concat
-     "api/v2/feed/account/"
-     account-uuid
-     "/category/"
-     category-uuid
-     "?changesSince="
-     (starling--txns-since)))
-   category-uuid))
+(defun starling--do-catgeory-transactions
+    (account-uuid category-uuid &optional txn-uuid)
+  "Get and show transactions for ACCOUNT-UUID and CATEGORY-UUID.
+Optionally pick TXN-UUID."
+  (starling--show-transactions (starling--do
+                                'get
+                                ;; TODO: sensible date:
+                                (concat
+                                 "api/v2/feed/account/"
+                                 account-uuid
+                                 "/category/"
+                                 category-uuid
+                                 "?changesSince="
+                                 (starling--txns-since)))
+                               category-uuid
+                               txn-uuid))
 
 (defun starling--maybe-show-transaction ()
   "Possibly show transaction details, if we're on a line with an id."
@@ -243,16 +244,15 @@ Also make it a string, for display purposes."
        (tabulated-list-get-id))))))
 
 (defvar-keymap starling-transactions-mode-map
-  :suppress 't
   :parent
-  tabulated-list-mode-map
+  (make-composed-keymap tabulated-list-mode-map)
   "RET"
   ;; TODO: these should be "public"?
   #'starling--maybe-show-transaction
   "c"
   #'starling--maybe-set-category
   "g"
-  #'starling-refesh-current-transansaction-view)
+  #'starling-refresh-current-transaction-view)
 
 (define-derived-mode
  starling-transactions-mode
@@ -268,14 +268,29 @@ Also make it a string, for display purposes."
         ("Time" 20 t)])
  (tabulated-list-init-header))
 
-(defun starling--show-transactions (txns category)
-  "Show the current balances of your Starling Spaces for TXNS in CATEGORY."
+(defun starling--show-transactions (txns category &optional txn-uuid)
+  "Show the current balances of your Starling Spaces for TXNS in CATEGORY.
+Optionally pick TXN-UUID."
   ;; TODO space name?
   (pop-to-buffer "*Starling Trnsactions*" nil)
   (starling-transactions-mode)
   (setq starling--current-category category)
   (setq tabulated-list-entries (starling-transactions--table txns))
-  (tabulated-list-print 1))
+  (tabulated-list-print 1)
+  (when txn-uuid
+    (starling--find-txn txn-uuid)))
+
+(defun starling--find-txn (txn-uuid)
+  "Find the TXN-UUID if in buffer."
+  (when (not (starling--txn-is txn-uuid))
+    (goto-char (point-min))
+    (while (and (not (starling--txn-is txn-uuid))
+                (> (forward-line) 1)))))
+
+(defun starling--txn-is (txn-uuid)
+  "Is the current txn TXN-UUID?"
+  (equal (tabulated-list-get-id) txn-uuid))
+
 
 (defun starling-transactions--table (txns)
   "Table for starling transactions TXNS."
@@ -583,10 +598,12 @@ Also make it a string, for display purposes."
   "Refresh a transactions view."
   ;; TODO: option jump to the right place via uuid not via luck
   (starling--do-catgeory-transactions
-   (starling--main-account-uuid) starling--current-category))
+   (starling--main-account-uuid) starling--current-category
+   (tabulated-list-get-id)))
 
-(defun starling-refesh-current-transansaction-view ()
+(defun starling-refresh-current-transaction-view ()
   "Refresh the current starling transaction view assuming one is selected."
+  (interactive)
   (when starling--current-category
     (starling--refresh-transactions)))
 (provide 'starling)
