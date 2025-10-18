@@ -58,7 +58,7 @@ Currently:
 Default bindings, are usual for a tabulated list but also:
 + ~g~ - refresh the transactions.
 + ~RET~ - see transaction details
-+ ~c~ - updateh the spending category for the current line (needs ~transaction:edit~ permission).
++ ~c~ - update the spending category for the current line (needs ~transaction:edit~ permission).
 
 * Limitations
 
