@@ -54,6 +54,12 @@ Currently:
  + ~M-x starling-spaces~ which should give a quick read on all your spaces. Press return (by default) on a space to see recent transactions.
  + ~M-x starling-insights~ whichs shows spending insights.
 
+*** Transactions Screens
+Default bindings, are usual for a tabulated list but also:
++ ~g~ - refresh the transactions.
++ ~RET~ - see transaction details
++ ~c~ - updateh the spending category for the current line (needs ~transaction:edit~ permission).
+
 * Limitations
 
 Many! But some notable ones:
