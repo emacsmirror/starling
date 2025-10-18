@@ -38,7 +38,7 @@ There is no ELPA etc for this yet, if you happen to use straight + use-package:
   (use-package plz
   :straight t)
   (use-package starling
-  :straight `(starling :type git :host github :repo "draxil/starling-el"))
+  :straight `(starling :type git :host codeberg :repo "draxil/starling-el"))
 #+end_src
 
 

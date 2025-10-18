@@ -4,8 +4,8 @@
 
 ;; Author: Joe Higton <draxil@gmail.com>
 ;; Contributors: Alex Drysdale <reissuecardboard@duck.com>
-;; Version: 0.1.2
-;; Homepage: https://github.com/draxil/starling-el
+;; Version: 0.1.3
+;; Homepage: https://codeberg.org/draxil/starling-el
 ;; Keywords: banking, finance
 ;; Package-Requires: ((emacs "28") (plz "0.7.2"))"
 
