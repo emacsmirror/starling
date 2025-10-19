@@ -600,7 +600,6 @@ Optionally pick TXN-UUID."
 
 (defun starling--refresh-transactions ()
   "Refresh a transactions view."
-  ;; TODO: option jump to the right place via uuid not via luck
   (starling--do-catgeory-transactions
    (starling--main-account-uuid) starling--current-category
    (tabulated-list-get-id)))
