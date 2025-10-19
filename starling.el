@@ -290,7 +290,7 @@ Optionally pick TXN-UUID."
   "Show the current balances of your Starling Spaces for TXNS in CATEGORY.
 Optionally pick TXN-UUID."
   ;; TODO space name?
-  (pop-to-buffer "*Starling Trnsactions*" nil)
+  (pop-to-buffer "*Starling Transactions*" nil)
   (starling-transactions-mode)
   (setq starling--current-category category)
   (setq tabulated-list-entries (starling-transactions--table txns))
