@@ -16,7 +16,7 @@
 ;;
 ;;; Licence:
 ;;
-;; Please see the LICENCE file.
+;; GPLv3. Please see the LICENCE file.
 
 ;;; Code:
 
