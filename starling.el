@@ -12,7 +12,8 @@
 ;;; Commentary:
 ;;
 ;; Get info from your starling bank account in Emacs!
-;; See the Readme.org for more.
+;; See the Readme.org, or go to https://codeberg.org/draxil/starling-el
+;; for instructions on getting started.
 ;;
 ;;; Licence:
 
@@ -27,7 +28,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/ 
+;; along with this program.  If not, see <https://www.gnu.org/licenses/
 
 ;;; Code:
 
@@ -50,10 +51,11 @@
   "https://api.starlingbank.com/")
 
 (defun starling--url (path)
-  "build a full url for path"
+  "Build a full url for PATH."
   (concat (starling--url-base) path))
 
 (defun starling--key ()
+  "Get the starling API Key."
   (let ((key
          (auth-source-pick-first-password
           :host "api.starlingbank.com"
@@ -67,13 +69,13 @@
 
 
 (defun starling--headers (body)
-  ""
+  "Construct the standard starling headers for BODY."
   `(("Authorization" . ,(concat "Bearer " (starling--key)))
     ,(when body
        '("Content-type" . "application/json"))))
 
 (defun starling--get-accounts ()
-  "get the list of accounts"
+  "Get the list of accounts."
   (starling--do 'get "api/v2/accounts"))
 
 
@@ -501,7 +503,7 @@ Optionally pick TXN-UUID."
     "New spending category: " (starling--spending-categories)
     nil 't)))
 
-;; Would be nice if starling could give us these :( 
+;; Would be nice if starling could give us these :(
 (defun starling--spending-categories ()
   "List of possible spending categories."
   '(BIKE
