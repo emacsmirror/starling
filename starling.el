@@ -24,7 +24,7 @@
 (require 'auth-source)
 
 (defgroup starling ()
-  "starling bank module")
+  "Starling bank module.")
 
 (defcustom starling-show-accounts-as-spaces 't
   "Show account balances along with spaces."
@@ -34,7 +34,7 @@
 ;; TODO options for dealing with multiple accounts.
 
 (defun starling--url-base ()
-  ""
+  "The baseurl for the api."
   "https://api.starlingbank.com/")
 
 (defun starling--url (path)
@@ -90,6 +90,7 @@ BODY optional, body to send in the request (TODO, not actually any use for this 
     req))
 
 (defun starling--main-account ()
+  "Get the main starling account."
   ;; TODO: not fault tolerant, assumes first account is the one!
   ;; ..which is dumb.
   ;; TODO: cache?
@@ -99,14 +100,16 @@ BODY optional, body to send in the request (TODO, not actually any use for this 
       (aref accounts 0)))))
 
 (defun starling--main-account-uuid ()
+  "Get the UUID for the main account."
   (alist-get 'accountUid (starling--main-account)))
 
 (defun starling--main-account-default-category ()
+  "Get the main account's default category."
   (alist-get 'defaultCategory (starling--main-account)))
 
 
 (defun starling--get-spaces ()
-  "fetch current state of spaces"
+  "Fetch current state of spaces."
   (starling--do
    'get
    (concat
@@ -114,6 +117,7 @@ BODY optional, body to send in the request (TODO, not actually any use for this 
 
 
 (defun starling-space-table ()
+  "Build the starling space table."
   ;; TODO process all accounts?
   (let ((spaces (starling--get-spaces)))
     (append
@@ -145,15 +149,14 @@ BODY optional, body to send in the request (TODO, not actually any use for this 
         (starling--account-display-balances))))))
 
 (defun starling--display-cash (cash)
-  "Display a starling cash value."
+  "Display formatting for CASH."
   ;; TODO care for currency?
   (starling--to-major (alist-get 'minorUnits cash)))
 
 (defun starling--to-major (units)
-  "Convert minor UNITS (pence cents) to major (pounds dollars).   
+  "Convert minor UNITS (pence cents) to major (pounds dollars).
 Also make it a string, for display purposes."
   (format "%.2f" (/ units 100.00)))
-;;(/ units 100.00)
 
 (defun starling--account-display-balances ()
   "Get account balances."
@@ -187,7 +190,7 @@ Also make it a string, for display purposes."
  (tabulated-list-init-header))
 
 (defun starling-spaces ()
-  "Shows the current balances of your Starling Spaces. "
+  "Show the current balances of your Starling Spaces."
   (interactive)
   (pop-to-buffer "*Starling Spaces*" nil)
   (starling-spaces-mode)
@@ -195,12 +198,13 @@ Also make it a string, for display purposes."
   (tabulated-list-print 1))
 
 (defun starling--txns-since ()
+  "The time we get transactions since."
   (format-time-string "%FT00:00:00Z"
                       (- (time-convert (current-time) 'integer)
                          2592000)))
 
 (defvar-local starling--current-category nil
-  "the current category we're looking at in this buffer")
+  "The current category we're looking at in this buffer.")
 
 (defun starling--maybe-show-transactions ()
   "Possibly show transactions, if we're on a line with an id."
@@ -414,7 +418,7 @@ Optionally pick TXN-UUID."
   (tabulated-list-print 1))
 
 (defun starling-insights ()
-  "Shows the starling insights for the current month."
+  "Show the starling insights for the current month."
   (interactive)
   (let ((insights (starling--get-spending-insights)))
     (starling--show-insights insights)))
@@ -423,10 +427,10 @@ Optionally pick TXN-UUID."
  starling-transaction-mode
  special-mode
  "starling-transaction-mode"
- "Mode for viewing a starling transaction")
+ "Mode for viewing a starling transaction.")
 
 (defun starling--show-transaction (txn)
-  "Show transaction TXN"
+  "Show transaction TXN."
   (pop-to-buffer "*Starling Transaction*" nil)
   (starling-transaction-mode)
   (cl-flet
@@ -477,7 +481,7 @@ Optionally pick TXN-UUID."
     (starling--set-spending-category (tabulated-list-get-id))))
 
 (defun starling--set-spending-category (txn-uuid)
-  "Prompt for a new spending category for TXN-UUID"
+  "Prompt for a new spending category for TXN-UUID."
   (interactive)
   (starling--maybe-action-spending-category
    txn-uuid
@@ -576,7 +580,7 @@ Optionally pick TXN-UUID."
 
 (defun starling--maybe-action-spending-category
     (txn-uuid new-category)
-  "Set the spending category for TXN-UUID to NEW-CATEGORY"
+  "Set the spending category for TXN-UUID to NEW-CATEGORY."
 
   (when (and txn-uuid new-category starling--current-category)
     (starling--do
@@ -607,3 +611,4 @@ Optionally pick TXN-UUID."
   (when starling--current-category
     (starling--refresh-transactions)))
 (provide 'starling)
+;;; starling.el ends here
