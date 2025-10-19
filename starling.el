@@ -1,13 +1,13 @@
-;;; starling.el -- Starling bank info in emacs.  -*- lexical-binding: t -*-
+;;; starling.el --- Starling bank interaction  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2024 Joe Higton
+;; Copyright (C) 2025 Joe Higton
 
 ;; Author: Joe Higton <draxil@gmail.com>
 ;; Contributors: Alex Drysdale <reissuecardboard@duck.com>
 ;; Version: 0.1.3
 ;; Homepage: https://codeberg.org/draxil/starling-el
-;; Keywords: banking, finance
-;; Package-Requires: ((emacs "28") (plz "0.7.2"))"
+;; Package-Requires: ((emacs "29.1") (plz "0.7.2"))
+;; Keywords: data, applications, banking
 
 ;;; Commentary:
 ;;
@@ -15,8 +15,19 @@
 ;; See the Readme.org for more.
 ;;
 ;;; Licence:
-;;
-;; GPLv3. Please see the LICENCE file.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/ 
 
 ;;; Code:
 
@@ -24,7 +35,8 @@
 (require 'auth-source)
 
 (defgroup starling ()
-  "Starling bank module.")
+  "Options for starling."
+  :group 'applications)
 
 (defcustom starling-show-accounts-as-spaces 't
   "Show account balances along with spaces."
