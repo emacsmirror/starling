@@ -80,7 +80,7 @@
 (defun starling--do (verb path &optional body)
   "Call the Starling API, and decode the response from JSON to an alist.
 
-VERB is a HTTP verb, e.g 'get.
+VERB is a HTTP verb, e.g \='get.
 PATH is the path (with no leading slash) of the call you want to
 make, e.g api/v2/accounts
 BODY optional, body to send in the request."
