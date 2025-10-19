@@ -83,8 +83,8 @@
 VERB is a HTTP verb, e.g 'get.
 PATH is the path (with no leading slash) of the call you want to
 make, e.g api/v2/accounts
-BODY optional, body to send in the request (TODO, not actually any use for this yet)."
-  ;; TODO: things go wrong!
+BODY optional, body to send in the request."
+  ;; TODO: better error handling!
   (let* ((body-encoded
           (when body
             (json-encode body)))
