@@ -507,7 +507,8 @@ Optionally pick TXN-UUID."
      (starling--transaction-field "Ref" (get-field 'reference))
      (starling--transaction-field "Time" (starling--txn-time txn))
      (starling--transaction-field
-      "Category" (get-field 'spendingCategory))
+      "Category"
+      (starling--format-category (get-field 'spendingCategory)))
      ;; FUTURE: more fields!
      )))
 
