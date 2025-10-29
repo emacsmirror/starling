@@ -10,11 +10,12 @@
 ;; Keywords: data, applications, banking
 
 ;;; Commentary:
-;;
+
 ;; Get info from your starling bank account in Emacs!
+
 ;; See the Readme.org, or go to https://codeberg.org/draxil/starling-el
 ;; for instructions on getting started.
-;;
+
 ;;; Licence:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -242,6 +243,7 @@ Also make it a string, for display purposes."
  (setq tabulated-list-sort-key '("Name" . nil))
  (tabulated-list-init-header))
 
+;;;###autoload
 (defun starling-spaces ()
   "Show the current balances of your Starling Spaces."
   (interactive)
@@ -473,6 +475,7 @@ Optionally pick TXN-UUID."
   (setq tabulated-list-entries (starling-insights--table insights))
   (tabulated-list-print 1))
 
+;;;###autoload
 (defun starling-insights ()
   "Show the starling insights for the current month."
   (interactive)
@@ -521,6 +524,7 @@ Optionally pick TXN-UUID."
     (insert value)
     (insert "\n")))
 
+;;;###autoload
 (defun starling-transactions ()
   "Show transactions, right now show the main account."
   (interactive)
